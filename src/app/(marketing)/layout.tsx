@@ -6,7 +6,7 @@ export default async function MarketingLayout({ children }: LayoutProps) {
   return (
     <div>
       <Header />
-      <main className="grid items-center justify-center">{children}</main>
+      <main className=" items-center justify-center">{children}</main>
       <Footer />
     </div>
   );

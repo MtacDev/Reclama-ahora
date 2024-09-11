@@ -1,4 +1,22 @@
 .hero-section{
-    padding-top: 100px;
+    padding-top: 75px;
     padding-bottom: 15%;
+    background-image: url('../../../../public/static/images/background.jpeg');
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    background-size: cover;
+    max-width: 100%;
+}
+
+.title-style{
+    background-color: rgba(0, 0, 0, 0.8);
+    height: 30%;
+}
+
+.resume-text{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 1%;
+  padding-bottom: 1%;
 }

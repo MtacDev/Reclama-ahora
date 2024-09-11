@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { EmailFormSchema, EmailFormValues } from '@/lib/types/validations';
+import { LoginFormSchema, LoginFormValues } from '@/lib/types/validations';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/Form';
@@ -19,20 +19,20 @@ interface AuthFormPropsI {
 export default function AuthForm({ submit_text }: AuthFormPropsI) {
   const router = useRouter();
 
-  const form = useForm<EmailFormValues>({
-    resolver: zodResolver(EmailFormSchema),
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(LoginFormSchema),
     defaultValues: {
       email: ''
     }
   });
 
   const {
-    register,
     formState: { isSubmitting }
   } = form;
 
-  const onSubmit = async (values: EmailFormValues) => {
-    const props: EmailFormValues = { email: values.email };
+  const onSubmit = async (values: LoginFormValues) => {
+    const props: LoginFormValues = { email: values.email, 
+      password:  values.password};
 
     await Login(props);
 
@@ -50,17 +50,23 @@ export default function AuthForm({ submit_text }: AuthFormPropsI) {
           <FormField
             control={form.control}
             name="email"
-            render={({ field }) => (
+            render={() => (
               <FormItem>
                 <FormMessage />
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
-                    {...register('email')}
                     type="text"
                     placeholder="Email"
                     className="bg-background-light dark:bg-background-dark"
-                    {...field}
+                  />
+                </FormControl>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input                
+                    type="password"
+                    placeholder="Password"
+                    className="bg-background-light dark:bg-background-dark"
                   />
                 </FormControl>
               </FormItem>
