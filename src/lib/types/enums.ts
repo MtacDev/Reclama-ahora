@@ -5,6 +5,7 @@ export enum IntervalE {
 
 export enum AuthProviderE {
   EMAIL = 'email',
+  PASSWORD = 'password',
   GOOGLE = 'google'
 }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoginFormSchema, LoginFormValues } from '@/lib/types/validations';
+import { EmailFormSchema, EmailFormValues } from '@/lib/types/validations';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/Form';
@@ -19,20 +19,21 @@ interface AuthFormPropsI {
 export default function AuthForm({ submit_text }: AuthFormPropsI) {
   const router = useRouter();
 
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(LoginFormSchema),
+  const form = useForm<EmailFormValues>({
+    resolver: zodResolver(EmailFormSchema),
     defaultValues: {
-      email: ''
+      email: '',
+      password: '',
     }
   });
 
   const {
+    register,
     formState: { isSubmitting }
   } = form;
 
-  const onSubmit = async (values: LoginFormValues) => {
-    const props: LoginFormValues = { email: values.email, 
-      password:  values.password};
+  const onSubmit = async (values: EmailFormValues) => {
+    const props: EmailFormValues = { email: values.email };
 
     await Login(props);
 
@@ -50,23 +51,27 @@ export default function AuthForm({ submit_text }: AuthFormPropsI) {
           <FormField
             control={form.control}
             name="email"
-            render={() => (
+            render={({ field }) => (
               <FormItem>
                 <FormMessage />
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
+                    {...register('email')}
                     type="text"
                     placeholder="Email"
                     className="bg-background-light dark:bg-background-dark"
+                    {...field}
                   />
                 </FormControl>
+                <FormMessage />
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input                
-                    type="password"
+                  <Input
+                    {...register('password')}
+                    type="Password"
                     placeholder="Password"
-                    className="bg-background-light dark:bg-background-dark"
+                    className="bg-background-light dark:bg-background-dark"                  
                   />
                 </FormControl>
               </FormItem>

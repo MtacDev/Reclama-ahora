@@ -27,8 +27,8 @@ const FeatureText = ({ isFlipped }: FeaturePropsI) => {
       <div className="mx-auto max-w-2xl lg:mx-0 lg:max-w-lg">
         <p className="mt-2 text-3xl font-bold tracking-tight  sm:text-4xl">Como realizar un reclamo</p>
         <p className="mt-6 text-lg leading-8 text-slate-600">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis
-          suscipit eaque, iste dolor cupiditate blanditiis ratione.
+          Primero debes ingresar en la barra de busqueda el nombre de la empresa, servicio o producto del cual deaseas dejar un reclamo, 
+          luego puedes seleccionar el tipo de reclamo y completar el formulario.
         </p>
         <div className="mt-10 max-w-xl space-y-8 text-base leading-7 text-slate-600 lg:max-w-none">
           {features.map((feature) => (

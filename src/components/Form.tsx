@@ -43,7 +43,6 @@ const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext);
   const itemContext = React.useContext(FormItemContext);
   const { getFieldState, formState } = useFormContext();
-
   const fieldState = getFieldState(fieldContext.name, formState);
 
   if (!fieldContext) {
@@ -102,8 +101,9 @@ const FormControl = React.forwardRef<
   React.ElementRef<typeof Slot>,
   React.ComponentPropsWithoutRef<typeof Slot>
 >(({ ...props }, ref) => {
+ 
   const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
-
+  console.log(error);
   return (
     <Slot
       ref={ref}
