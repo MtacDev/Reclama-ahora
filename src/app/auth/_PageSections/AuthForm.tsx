@@ -22,7 +22,8 @@ export default function AuthForm({ submit_text }: AuthFormPropsI) {
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
-      email: ''
+      email: '',
+      password: ''
     }
   });
 
@@ -50,25 +51,37 @@ export default function AuthForm({ submit_text }: AuthFormPropsI) {
           <FormField
             control={form.control}
             name="email"
-            render={() => (
+            render={({ field }) => (
               <FormItem>
-                <FormMessage />
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
-                    type="text"
+                    {...field}
+                    type="email"
                     placeholder="Email"
                     className="bg-background-light dark:bg-background-dark"
                   />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input                
+                  <Input
+                    {...field}
                     type="password"
                     placeholder="Password"
                     className="bg-background-light dark:bg-background-dark"
                   />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />

@@ -27,11 +27,19 @@ export const DisplayNameFormSchema = z.object({
 });
 
 export const LoginFormSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email({
+    message: 'Please enter a valid email address.'
+  }),
   password: z.string().min(4, {
     message: 'Password must be at least 4 characters.'
   }).max(30, {
     message: 'Password must not be longer than 30 characters.'
+  })
+});
+
+export const EmailFormSchema = z.object({
+  email: z.string().email({
+    message: 'Please enter a valid email address.'
   })
 });
 
@@ -48,5 +56,6 @@ export const UpdatePasswordFormSchema = z.object({
 
 export type DisplayNameFormValues = z.infer<typeof DisplayNameFormSchema>;
 export type LoginFormValues = z.infer<typeof LoginFormSchema>;
+export type EmailFormValues = z.infer<typeof EmailFormSchema>;
 export type UpdatePasswordFormValues = z.infer<typeof UpdatePasswordFormSchema>;
 export type todoFormValues = z.infer<typeof todoFormSchema>;
