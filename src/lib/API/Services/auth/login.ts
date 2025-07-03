@@ -8,10 +8,12 @@ import config from '@/lib/config/auth';
 import { AuthProviderE } from '@/lib/types/enums';
 import { EmailFormValues } from '@/lib/types/validations';
 
-export const Login = async ({ email }: EmailFormValues) => {
+export const Login = async ({ email, password }: EmailFormValues) => {
+  console.log({ email, password });
   try {
     const signInResult = await signIn(AuthProviderE.EMAIL, {
       email: email.toLowerCase(),
+      password,
       redirect: false,
       callbackUrl: config.redirects.toDashboard
     });
