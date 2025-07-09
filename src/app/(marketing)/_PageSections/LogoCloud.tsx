@@ -48,7 +48,7 @@ export default function LogoCloud() {
         
         <div className="mx-auto max-w-5xl">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-8">
-            {companies.map((company, index) => (
+            {companies.map((company) => (
               <div 
                 key={company.name}
                 className="flex flex-col items-center justify-center p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 group cursor-pointer"

@@ -38,10 +38,11 @@ export const UpdateTodo = async ({ id, title, description }: UpdateTodoPropsI) =
     description
   };
 
+  const strID = id.toString();
   try {
     await prisma.todo.update({
       where: {
-        id
+        id: strID
       },
       data
     });
@@ -51,10 +52,11 @@ export const UpdateTodo = async ({ id, title, description }: UpdateTodoPropsI) =
 };
 
 export const DeleteTodo = async ({ id }: DeleteTodoPropsI) => {
+  const strID = id.toString();
   try {
     await prisma.todo.delete({
       where: {
-        id
+        id: strID
       }
     });
   } catch (err) {

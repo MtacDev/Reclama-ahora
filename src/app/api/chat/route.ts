@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   // Wrap with a try/catch to handle API errors
   try {
     const { messages } = await req.json();
-
+    
     const response = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       stream: true,

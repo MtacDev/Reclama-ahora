@@ -124,7 +124,7 @@ export default function DataListSection() {
                 <div className="relative mb-4">
                   <Quote className="absolute -top-2 -left-2 w-8 h-8 text-gray-200" />
                   <p className="text-gray-700 italic pl-6">
-                    "{testimonial.text}"
+                    &ldquo;{testimonial.text}&rdquo;
                   </p>
                 </div>
 

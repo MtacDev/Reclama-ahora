@@ -23,9 +23,10 @@ export const GetTodosByUserId = cache(async (): Promise<Todo[]> => {
 
 export const GetTodoById = cache(async (id: number): Promise<Todo> => {
   try {
+    const strID = id.toString();
     const todo = await prisma.todo.findFirst({
       where: {
-        id
+        id: strID
       }
     });
 

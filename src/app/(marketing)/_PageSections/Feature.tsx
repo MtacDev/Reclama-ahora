@@ -1,6 +1,4 @@
 import { Search, FileText, MessageSquare, CheckCircle2, Shield, Clock } from 'lucide-react';
-import Image from 'next/image';
-import DashPic from '../../../../public/static/images/dash.png';
 
 const claimSteps = [
   {
@@ -47,10 +45,6 @@ const benefits = [
     color: 'text-blue-500'
   }
 ];
-
-interface FeaturePropsI {
-  isFlipped?: boolean;
-}
 
 const ClaimProcessSection = () => {
   return (
@@ -189,7 +183,7 @@ const WhyChooseUsSection = () => {
   );
 };
 
-export default function Feature({ isFlipped }: FeaturePropsI) {
+export default function Feature() {
   return (
     <div className="mt-8">
       <ClaimProcessSection />
