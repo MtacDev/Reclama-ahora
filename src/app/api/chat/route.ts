@@ -1,6 +1,5 @@
 import OpenAI from 'openai';
 import openai from '@/lib/API/Services/init/ai';
-import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { NextResponse } from 'next/server';
 
 export const runtime = 'edge';
@@ -16,9 +15,7 @@ export async function POST(req: Request) {
       messages
     });
 
-    const stream = OpenAIStream(response);
-
-    return new StreamingTextResponse(stream);
+    return NextResponse.json({ response });
   } catch (error) {
     // Check if the error is an APIError
     if (error instanceof OpenAI.APIError) {

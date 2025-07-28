@@ -33,11 +33,26 @@ export default function AuthForm({ submit_text }: AuthFormPropsI) {
   } = form;
 
   const onSubmit = async (values: EmailFormValues) => {
-    const props: EmailFormValues = { email: values.email };
+    // Set form to loading state
+    form.setValue('password', values.password); // Preserve password value
+    
+    const signInResult = await Login(values);
+    if (signInResult && !signInResult.error) {
+      // Only redirect if authentication was successful
 
-    await Login(props);
+      return true;
+    } else {
+      // Display error message for failed authentication
+      form.setError("email", { 
+        type: "manual",
+        message: "Invalid email or password"
+      });
+      // Focus back on password field for better UX
+      (document.querySelector('input[type="Password"]') as HTMLInputElement)?.focus();
+      // Prevent any NextAuth automatic redirection
 
-    router.push(config.redirects.authConfirm);
+      return false;
+    }
   };
 
   const handleGoogleSignIn = async () => {
@@ -47,7 +62,7 @@ export default function AuthForm({ submit_text }: AuthFormPropsI) {
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <FormField
             control={form.control}
             name="email"
@@ -79,7 +94,7 @@ export default function AuthForm({ submit_text }: AuthFormPropsI) {
           />
 
           <div>
-            <Button disabled={isSubmitting} className="w-full">
+            <Button disabled={isSubmitting} type="submit" className="w-full">
               {isSubmitting && <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />}
               <Icons.Mail className="mr-2 h-4 w-4" />
               {submit_text}
@@ -97,7 +112,7 @@ export default function AuthForm({ submit_text }: AuthFormPropsI) {
             <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
           </div>
         </div>
-        <Button onClick={handleGoogleSignIn} variant="outline" className="w-full">
+        <Button variant="outline" className="w-full">
           <Icons.Google />
           <span className="ml-2 font-semibold">Sign in with Google</span>
         </Button>

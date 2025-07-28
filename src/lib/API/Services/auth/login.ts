@@ -11,35 +11,44 @@ import { EmailFormValues } from '@/lib/types/validations';
 export const Login = async ({ email, password }: EmailFormValues) => {
   console.log({ email, password });
   try {
-    const signInResult = await signIn(AuthProviderE.EMAIL, {
+    const result = await signIn(AuthProviderE.PASSWORD, {
       email: email.toLowerCase(),
       password,
       redirect: false,
       callbackUrl: config.redirects.toDashboard
     });
-
-    if (signInResult?.error) {
-      toast.error(configuration.errorMessageGeneral);
-      const error: Error = { name: 'Auth Error', message: signInResult?.error };
-      AuthError(error);
+    
+    if (!result) {
+      toast.error("Authentication failed");
+      return { error: "Authentication failed" };
     }
+    
+    if (result.error) {
+      toast.error("Invalid email or password");
+      return { error: result.error, status: result.status };
+    }
+    
+    if (result.ok === false) {
+      toast.error("Authentication failed");
+      return { error: "Authentication failed", status: result.status };
+    }
+    
+    return result;
   } catch (err) {
     toast.error(configuration.errorMessageGeneral);
     AuthError(err);
-  }
+    return { error: "An error occurred during sign in" };
+  }   
 };
 
 export const GoogleLogin = async () => {
   try {
-    const signInResult = await signIn(AuthProviderE.GOOGLE, {
+    console.log('GoogleLogin');
+    await signIn(AuthProviderE.GOOGLE, {
       callbackUrl: config.redirects.toDashboard
     });
-
-    if (signInResult?.error) {
-      toast.error(configuration.errorMessageGeneral);
-      const error: Error = { name: 'Auth Error', message: signInResult?.error };
-      AuthError(error);
-    }
+    // When redirect is true, execution won't reach here unless there's an error
+    // that prevents the redirect
   } catch (err) {
     toast.error(configuration.errorMessageGeneral);
     AuthError(err);
