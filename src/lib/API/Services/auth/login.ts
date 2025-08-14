@@ -17,7 +17,7 @@ export const Login = async ({ email, password }: EmailFormValues) => {
       redirect: false,
       callbackUrl: config.redirects.toDashboard
     });
-    
+    console.log({ result });
     if (!result) {
       toast.error("Authentication failed");
       return { error: "Authentication failed" };

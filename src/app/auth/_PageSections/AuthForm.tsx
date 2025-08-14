@@ -33,21 +33,16 @@ export default function AuthForm({ submit_text }: AuthFormPropsI) {
   } = form;
 
   const onSubmit = async (values: EmailFormValues) => {
-    // Set form to loading state
-    form.setValue('password', values.password); // Preserve password value
-    
     const signInResult = await Login(values);
     if (signInResult && !signInResult.error) {
-      // Only redirect if authentication was successful
-
+      console.log('signInResult', signInResult);
       return true;
     } else {
-      // Display error message for failed authentication
+      console.log('signInResult', signInResult);
       form.setError("email", { 
         type: "manual",
         message: "Invalid email or password"
       });
-      // Focus back on password field for better UX
       (document.querySelector('input[type="Password"]') as HTMLInputElement)?.focus();
       // Prevent any NextAuth automatic redirection
 
@@ -62,7 +57,6 @@ export default function AuthForm({ submit_text }: AuthFormPropsI) {
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
           <FormField
             control={form.control}
             name="email"
@@ -92,16 +86,14 @@ export default function AuthForm({ submit_text }: AuthFormPropsI) {
               </FormItem>
             )}
           />
-
-          <div>
-            <Button disabled={isSubmitting} type="submit" className="w-full">
+      </Form>
+      <div className="space-y-8 mt-8">
+            <Button disabled={isSubmitting} type="submit" className="w-full" onClick={form.handleSubmit(onSubmit)}>
               {isSubmitting && <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />}
               <Icons.Mail className="mr-2 h-4 w-4" />
               {submit_text}
             </Button>
           </div>
-        </form>
-      </Form>
 
       <div className="space-y-8 mt-8">
         <div className="relative">

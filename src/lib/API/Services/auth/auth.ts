@@ -14,17 +14,17 @@ export const {
 
   providers: [
     Google({
+      id: 'google',
+      name: 'Google',
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET
     }),
     CredentialsProvider({
+      id: 'password',
       name: 'Credentials',
-      credentials: {
-        email: { label: 'Email', type: 'email', placeholder: 'jsmith@example.com' },
-        password: { label: 'Password', type: 'password' }
-      },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         const { email, password } = credentials as { email: string; password: string };
+        console.log('credentials', credentials);
         const prisma = getPrismaClient();
         const user = await prisma.user.findUnique({
           where: { email },
@@ -53,6 +53,7 @@ export const {
   session: { strategy: 'database' },
   pages: {
     signIn: config.redirects.toLogin,
+    error: config.redirects.toLogin,
   },
   debug: true,
   callbacks: {
