@@ -1,9 +1,10 @@
 'use server';
 
-import prisma, { Prisma } from '../../Services/init/prisma';
+import prisma from '../../Services/init/prisma';
 import { GetUser } from '@/lib/API/Database/user/queries';
 import { PrismaDBError } from '@/lib/utils/error';
 import { todoFormValues } from '@/lib/types/validations';
+import { Prisma, PrismaClient } from '@prisma/client';
 
 interface UpdateTodoPropsI extends todoFormValues {
   id: number;
@@ -26,7 +27,7 @@ export const CreateTodo = async ({ title, description }: todoFormValues) => {
   };
 
   try {
-    await prisma.todo.create({ data });
+    await prisma().todo.create({ data });
   } catch (err) {
     PrismaDBError(err);
   }
@@ -39,7 +40,7 @@ export const UpdateTodo = async ({ id, title, description }: UpdateTodoPropsI) =
   };
 
   try {
-    await prisma.todo.update({
+    await prisma().todo.update({
       where: {
         id
       },
@@ -52,7 +53,7 @@ export const UpdateTodo = async ({ id, title, description }: UpdateTodoPropsI) =
 
 export const DeleteTodo = async ({ id }: DeleteTodoPropsI) => {
   try {
-    await prisma.todo.delete({
+    await prisma().todo.delete({
       where: {
         id
       }

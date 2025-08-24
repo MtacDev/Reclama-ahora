@@ -2,39 +2,60 @@ import NextAuth from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import config from '@/lib/config/auth';
 import Google from 'next-auth/providers/google';
-import EmailProvider from 'next-auth/providers/email';
-import { sendVerificationRequest } from './sendVerificationRequest';
+import CredentialsProvider from 'next-auth/providers/credentials';
 
-import prisma from '../init/prisma';
+import getPrismaClient from '../init/prisma';
 
 export const {
   handlers: { GET, POST },
   auth
 } = NextAuth({
+
+
   providers: [
     Google({
+      id: 'google',
+      name: 'Google',
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET
     }),
-    EmailProvider({
-      server: {
-        host: process.env.EMAIL_SERVER_HOST,
-        port: process.env.EMAIL_SERVER_PORT,
-        auth: {
-          user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.EMAIL_SERVER_PASSWORD
+    CredentialsProvider({
+      id: 'password',
+      name: 'Credentials',
+      async authorize(credentials) {
+        const { email, password } = credentials as { email: string; password: string };
+        console.log('credentials', credentials);
+        const prisma = getPrismaClient();
+        const user = await prisma.user.findUnique({
+          where: { email },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            password: true,
+          },
+        });
+        if (!user || !('password' in user)) {
+          throw new Error('InvalidCredentials');
         }
-      },
-      from: process.env.EMAIL_FROM,
-      sendVerificationRequest
+        const bcrypt = require('bcryptjs');
+        const isValid = await bcrypt.compare(password, user.password);
+        if (!isValid) throw new Error('InvalidCredentials');
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name
+        };
+      }
     })
   ],
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(getPrismaClient()),
   session: { strategy: 'database' },
   pages: {
-    signIn: config.redirects.toLogin
+    signIn: config.redirects.toLogin,
+    error: config.redirects.toLogin,
   },
-  //debug: true,
+  debug: true,
   callbacks: {
     async session({ session, user }) {
       if (user || session) {
@@ -43,6 +64,6 @@ export const {
       }
 
       throw 'User Not Found';
-    }
+    },
   }
 });

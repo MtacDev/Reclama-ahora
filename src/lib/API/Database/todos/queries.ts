@@ -9,7 +9,7 @@ export const GetTodosByUserId = cache(async (): Promise<Todo[]> => {
   const user_id = user?.id;
 
   try {
-    const todos = await prisma.todo.findMany({
+    const todos = await prisma().todo.findMany({
       where: {
         user_id
       }
@@ -23,7 +23,7 @@ export const GetTodosByUserId = cache(async (): Promise<Todo[]> => {
 
 export const GetTodoById = cache(async (id: number): Promise<Todo> => {
   try {
-    const todo = await prisma.todo.findFirst({
+    const todo = await prisma().todo.findFirst({
       where: {
         id
       }
@@ -37,7 +37,7 @@ export const GetTodoById = cache(async (id: number): Promise<Todo> => {
 
 export const GetAllTodos = cache(async (): Promise<Todo[]> => {
   try {
-    const todos = await prisma.todo.findMany({
+    const todos = await prisma().todo.findMany({
       take: 10
     });
 

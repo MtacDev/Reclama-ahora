@@ -1,4 +1,4 @@
-import '../styles/globals.css';
+it?import '../styles/globals.css';
 import { InterFont } from '@/styles/fonts';
 import { ThemeProvider } from '@/styles/ThemeProvider';
 import { ToastContainer } from 'react-toastify';

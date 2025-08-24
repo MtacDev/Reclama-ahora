@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoginFormSchema, LoginFormValues } from '@/lib/types/validations';
+import { EmailFormSchema, EmailFormValues } from '@/lib/types/validations';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/Form';
@@ -19,25 +19,35 @@ interface AuthFormPropsI {
 export default function AuthForm({ submit_text }: AuthFormPropsI) {
   const router = useRouter();
 
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(LoginFormSchema),
+  const form = useForm<EmailFormValues>({
+    resolver: zodResolver(EmailFormSchema),
     defaultValues: {
       email: '',
-      password: ''
+      password: '',
     }
   });
 
   const {
+    register,
     formState: { isSubmitting }
   } = form;
 
-  const onSubmit = async (values: LoginFormValues) => {
-    const props: LoginFormValues = { email: values.email, 
-      password:  values.password};
+  const onSubmit = async (values: EmailFormValues) => {
+    const signInResult = await Login(values);
+    if (signInResult && !signInResult.error) {
+      console.log('signInResult', signInResult);
+      return true;
+    } else {
+      console.log('signInResult', signInResult);
+      form.setError("email", { 
+        type: "manual",
+        message: "Invalid email or password"
+      });
+      (document.querySelector('input[type="Password"]') as HTMLInputElement)?.focus();
+      // Prevent any NextAuth automatic redirection
 
-    await Login(props);
-
-    router.push(config.redirects.authConfirm);
+      return false;
+    }
   };
 
   const handleGoogleSignIn = async () => {
@@ -47,7 +57,6 @@ export default function AuthForm({ submit_text }: AuthFormPropsI) {
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
             name="email"
@@ -56,45 +65,35 @@ export default function AuthForm({ submit_text }: AuthFormPropsI) {
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
-                    {...field}
-                    type="email"
+                    {...register('email')}
+                    type="text"
                     placeholder="Email"
                     className="bg-background-light dark:bg-background-dark"
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input
-                    {...field}
-                    type="password"
+                    {...register('password')}
+                    type="Password"
                     placeholder="Password"
-                    className="bg-background-light dark:bg-background-dark"
+                    className="bg-background-light dark:bg-background-dark"                  
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          <div>
-            <Button disabled={isSubmitting} className="w-full">
+      </Form>
+      <div className="space-y-8 mt-8">
+            <Button disabled={isSubmitting} type="submit" className="w-full" onClick={form.handleSubmit(onSubmit)}>
               {isSubmitting && <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />}
               <Icons.Mail className="mr-2 h-4 w-4" />
               {submit_text}
             </Button>
           </div>
-        </form>
-      </Form>
 
       <div className="space-y-8 mt-8">
         <div className="relative">
@@ -105,7 +104,7 @@ export default function AuthForm({ submit_text }: AuthFormPropsI) {
             <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
           </div>
         </div>
-        <Button onClick={handleGoogleSignIn} variant="outline" className="w-full">
+        <Button variant="outline" className="w-full">
           <Icons.Google />
           <span className="ml-2 font-semibold">Sign in with Google</span>
         </Button>

@@ -1,44 +1,86 @@
-import { neonConfig, Pool, PoolConfig } from '@neondatabase/serverless';
-import { PrismaNeon } from '@prisma/adapter-neon';
-import { PrismaClient, Prisma } from '@prisma/client';
-import ws from 'ws';
+import { PrismaClient } from '@prisma/client';
 
-//www.prisma.io/docs/orm/more/help-and-troubleshooting/help-articles/nextjs-prisma-client-dev-practices
-declare global {
-  var prisma: PrismaClient | undefined; // eslint-disable-line
+// Validate DATABASE_URL format
+function validateDatabaseUrl(url: string | undefined): string {
+  if (!url) {
+    throw new Error('DATABASE_URL is not defined in environment variables');
+  }
+  
+  // Check if URL starts with postgresql:// for PostgreSQL
+  if (!url.startsWith('postgresql://')) {
+    throw new Error('DATABASE_URL must start with "postgresql://" for PostgreSQL database');
+  }
+  
+  // Basic validation for PostgreSQL URL format
+  const urlPattern = /^postgresql:\/\/[^:]+:[^@]+@[^:]+:\d+\/[^\s]+$/;
+  if (!urlPattern.test(url)) {
+    throw new Error('DATABASE_URL format is invalid. Expected format: postgresql://username:password@host:port/database');
+  }
+  
+  return url;
 }
 
-let prisma: PrismaClient;
+// Global variable to store the Prisma client instance
+let prisma: PrismaClient | null = null;
 
-if (process.env.NODE_ENV === 'development') {
-  prisma = new PrismaClient();
-  global.prisma = prisma;
-}
+// Function to create and return Prisma client instance
+function getPrismaClient(): PrismaClient {
+  if (prisma) {
+    return prisma;
+  }
 
-if (process.env.NODE_ENV === 'production') {
-  // setup
-  neonConfig.webSocketConstructor = ws;
-  const connectionString = process.env.DATABASE_URL;
-  const poolConfig: PoolConfig = { connectionString };
-
-  // instantiate
-  const pool = new Pool(poolConfig);
-  const adapter = new PrismaNeon(pool);
-  prisma = new PrismaClient({ adapter });
-}
-
-if (process.env.NODE_ENV === 'test') {
-  const url = process.env.DATABASE_URL_TEST;
-
-  prisma = new PrismaClient({
-    datasources: {
-      db: {
-        url
-      }
+  try {
+    let databaseUrl: string;
+    
+    if (process.env.NODE_ENV === 'development') {
+      databaseUrl = validateDatabaseUrl(process.env.DATABASE_URL);      
+      prisma = new PrismaClient({ 
+        datasources: { 
+          db: { 
+            url: databaseUrl 
+          } 
+        },
+        log: ['query', 'info', 'warn', 'error']
+      });
+    } else if (process.env.NODE_ENV === 'production') {
+      databaseUrl = validateDatabaseUrl(process.env.DATABASE_URL);
+      prisma = new PrismaClient({ 
+        datasources: { 
+          db: { 
+            url: databaseUrl 
+          } 
+        },
+        log: ['warn', 'error']
+      });
+    } else if (process.env.NODE_ENV === 'test') {
+      databaseUrl = validateDatabaseUrl(process.env.DATABASE_URL_TEST);
+      prisma = new PrismaClient({
+        datasources: {
+          db: {
+            url: databaseUrl
+          }
+        },
+        log: ['warn', 'error']
+      });
+    } else {
+      // Fallback for other environments
+      databaseUrl = validateDatabaseUrl(process.env.DATABASE_URL);
+      prisma = new PrismaClient({ 
+        datasources: { 
+          db: { 
+            url: databaseUrl 
+          } 
+        },
+        log: ['warn', 'error']
+      });
     }
-  });
+
+    return prisma;
+  } catch (error) {
+    console.error('Failed to initialize Prisma Client:', error);
+    throw error;
+  }
 }
 
-export { Prisma };
-
-export default prisma;
+// Export the function instead of direct instance
+export default getPrismaClient;
