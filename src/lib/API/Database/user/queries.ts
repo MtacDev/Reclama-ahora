@@ -9,14 +9,11 @@ export const GetUser = cache(async (): Promise<User> => {
   const id = session?.user?.id;
 
   try {
-    /* const user = await prisma.user.findFirst({
+    const user = await prisma.user.findFirst({
       where: {
         id
       }
-    }); */
-    const user = {
-      name: 'test',
-    };
+    }); 
     return user;
   } catch (err) {
     PrismaDBError(err);

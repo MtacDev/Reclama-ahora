@@ -27,14 +27,21 @@ export const DisplayNameFormSchema = z.object({
 });
 
 export const EmailFormSchema = z.object({
-  email: z.string().email()
+  email: z.string().email(),
+  password: z.string()
+});
+
+export const EmailFormSchema = z.object({
+  email: z.string().email({
+    message: 'Please enter a valid email address.'
+  })
 });
 
 export const UpdatePasswordFormSchema = z.object({
   password: z
     .string()
-    .min(8, {
-      message: 'Password must be at least 8 characters.'
+    .min(4, {
+      message: 'Password must be at least 4 characters.'
     })
     .max(30, {
       message: 'Password must not be longer than 30 characters.'
